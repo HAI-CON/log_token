@@ -13,10 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Decode Base64 log
+      - name: Lấy và giải mã dòng log mới nhất
         id: decode
         run: |
-          decoded=$(base64 -d log_token.txt | tr -d '\r')
+          last=$(tail -n 1 log_token.txt | tr -d '\r')
+          decoded=$(echo "$last" | base64 -d)
           echo "log<<EOF" >> $GITHUB_OUTPUT
           echo "$decoded" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -25,5 +26,5 @@ jobs:
         run: |
           curl -s -X POST https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage \
             -d chat_id=${{ secrets.CHAT_ID }} \
-            --data-urlencode "text=📥 Log mới (giải mã):%0A<pre>${{ steps.decode.outputs.log }}</pre>" \
+            --data-urlencode "text= Log mới (giải mã):%0A<pre>${{ steps.decode.outputs.log }}</pre>" \
             -d parse_mode=HTML

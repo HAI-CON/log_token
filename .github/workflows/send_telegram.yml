@@ -1,1 +1,26 @@
-ok
+name: Notify Telegram When Log Changes
+
+on:
+  push:
+    paths:
+      - log_token.txt
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get latest log line
+        id: getlog
+        run: |
+          echo "::set-output name=log::$(tail -n 1 log_token.txt)"
+
+      - name: Send Telegram message
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.CHAT_ID }} \
+            -d text="📥 <b>Log mới:</b> <code>${{ steps.getlog.outputs.log }}</code>" \
+            -d parse_mode=HTML
